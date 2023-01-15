@@ -3,7 +3,7 @@ import { fetchCountries } from './fetchCountries';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 
-const DEBOUNCE_DELAY = 2000;
+const DEBOUNCE_DELAY = 300;
 
 const inputSearchCountry = document.querySelector('#search-box');
 const listCountry = document.querySelector('.country-list');
@@ -17,8 +17,7 @@ inputSearchCountry.addEventListener(
 function onSearchCountry(evt) {
   const inputValue = evt.target.value.trim();
   if (!inputValue) {
-    listCountry.innerHTML = '';
-    infoCountry.innerHTML = '';
+    clearAllMarkup();
 
     return;
   }
@@ -31,12 +30,14 @@ function onSearchCountry(evt) {
       } else if (response.length >= 2 && response.length <= 10) {
         createMarkupCountries(response);
       } else if (response.length > 10) {
+        clearAllMarkup();
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
       }
     })
     .catch(err => {
+      clearAllMarkup();
       Notiflix.Notify.failure('Oops, there is no country with that name');
     });
 }
@@ -66,4 +67,9 @@ function createMarkupCountries(arrayCountries) {
         `<li class="country-item"><img class="country-img" src="${svg}" alt="Flag of ${official}" width="100"></img><h2>${official}</h2></li>`
     )
     .join('');
+}
+
+function clearAllMarkup() {
+  listCountry.innerHTML = '';
+  infoCountry.innerHTML = '';
 }
